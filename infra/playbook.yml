@@ -1,0 +1,247 @@
+---
+- name: Deploy TUBES CC multi-node
+  hosts: localhost
+  connection: local
+  become: yes
+  vars:
+    app_root: /opt/tubes-cc
+    db_host: 192.168.56.11
+    db_name: finance_db
+    db_user: finance_user
+    db_password: finance_password
+    backend_host: 192.168.56.10
+    backend_port: 5000
+    frontend_web_root: /var/www/tubes-cc/frontend/dist
+
+  tasks:
+    - name: Setup MySQL database node
+      block:
+        - name: Install MySQL server
+          apt:
+            name:
+              - mysql-server
+              - python3-pymysql
+            state: present
+            update_cache: yes
+
+        - name: Allow MySQL remote connections
+          lineinfile:
+            path: /etc/mysql/mysql.conf.d/mysqld.cnf
+            regexp: '^bind-address\s*='
+            line: 'bind-address = 0.0.0.0'
+
+        - name: Restart MySQL after bind-address change
+          service:
+            name: mysql
+            state: restarted
+            enabled: yes
+
+        - name: Create application database
+          mysql_db:
+            name: "{{ db_name }}"
+            state: present
+            login_unix_socket: /var/run/mysqld/mysqld.sock
+
+        - name: Create application database user
+          mysql_user:
+            name: "{{ db_user }}"
+            host: "%"
+            password: "{{ db_password }}"
+            priv: "{{ db_name }}.*:ALL"
+            state: present
+            login_unix_socket: /var/run/mysqld/mysqld.sock
+
+        - name: Flush MySQL privileges
+          command: mysql -e "FLUSH PRIVILEGES;"
+          changed_when: false
+      when: target_node == 'database'
+
+    - name: Setup Node.js repository
+      shell: |
+        set -e
+        if ! command -v node >/dev/null 2>&1 || ! node -v | grep -q '^v20\.'; then
+          apt-get install -y ca-certificates curl gnupg
+          curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+        fi
+      args:
+        executable: /bin/bash
+      when: target_node in ['backend', 'frontend']
+
+    - name: Install shared Node.js deployment packages
+      apt:
+        name:
+          - nodejs
+          - rsync
+          - build-essential
+          - python3
+        state: present
+        update_cache: yes
+      when: target_node in ['backend', 'frontend']
+
+    - name: Setup Express backend node
+      block:
+        - name: Create backend application directory
+          file:
+            path: "{{ app_root }}/backend"
+            state: directory
+            owner: vagrant
+            group: vagrant
+            mode: "0755"
+
+        - name: Copy backend source without local dependencies
+          shell: |
+            rsync -a --delete \
+              --exclude node_modules \
+              --exclude scratch \
+              --exclude database.sqlite \
+              /vagrant/backend/ {{ app_root }}/backend/
+            chown -R vagrant:vagrant {{ app_root }}/backend
+          args:
+            executable: /bin/bash
+
+        - name: Write backend environment file
+          copy:
+            dest: "{{ app_root }}/backend/.env"
+            owner: vagrant
+            group: vagrant
+            mode: "0600"
+            content: |
+              PORT={{ backend_port }}
+              DB_DIALECT=mysql
+              DB_HOST={{ db_host }}
+              DB_NAME={{ db_name }}
+              DB_USER={{ db_user }}
+              DB_PASSWORD={{ db_password }}
+              JWT_SECRET=tubes_cc_secret_key
+
+        - name: Install backend production dependencies
+          command: npm install --omit=dev
+          args:
+            chdir: "{{ app_root }}/backend"
+          become_user: vagrant
+
+        - name: Create backend systemd service
+          copy:
+            dest: /etc/systemd/system/tubes-cc-backend.service
+            mode: "0644"
+            content: |
+              [Unit]
+              Description=TUBES CC Express Backend
+              After=network-online.target
+              Wants=network-online.target
+
+              [Service]
+              Type=simple
+              WorkingDirectory={{ app_root }}/backend
+              EnvironmentFile={{ app_root }}/backend/.env
+              ExecStart=/usr/bin/node {{ app_root }}/backend/index.js
+              Restart=always
+              RestartSec=5
+              User=vagrant
+              Group=vagrant
+
+              [Install]
+              WantedBy=multi-user.target
+
+        - name: Enable and restart backend service
+          systemd:
+            name: tubes-cc-backend
+            state: restarted
+            enabled: yes
+            daemon_reload: yes
+      when: target_node == 'backend'
+
+    - name: Setup React frontend node
+      block:
+        - name: Install Nginx
+          apt:
+            name: nginx
+            state: present
+            update_cache: yes
+
+        - name: Create frontend application directory
+          file:
+            path: "{{ app_root }}/frontend"
+            state: directory
+            owner: vagrant
+            group: vagrant
+            mode: "0755"
+
+        - name: Copy frontend source without local dependencies
+          shell: |
+            rsync -a --delete \
+              --exclude node_modules \
+              --exclude dist \
+              /vagrant/frontend/ {{ app_root }}/frontend/
+            chown -R vagrant:vagrant {{ app_root }}/frontend
+          args:
+            executable: /bin/bash
+
+        - name: Install frontend dependencies
+          command: npm install
+          args:
+            chdir: "{{ app_root }}/frontend"
+          become_user: vagrant
+
+        - name: Build frontend with API proxied through Nginx
+          command: npm run build
+          args:
+            chdir: "{{ app_root }}/frontend"
+          environment:
+            VITE_API_URL: /api
+          become_user: vagrant
+
+        - name: Publish frontend build
+          shell: |
+            mkdir -p {{ frontend_web_root }}
+            rsync -a --delete {{ app_root }}/frontend/dist/ {{ frontend_web_root }}/
+            chown -R www-data:www-data /var/www/tubes-cc
+          args:
+            executable: /bin/bash
+
+        - name: Configure Nginx frontend and API proxy
+          copy:
+            dest: /etc/nginx/sites-available/tubes-cc
+            mode: "0644"
+            content: |
+              server {
+                  listen 80 default_server;
+                  server_name _;
+
+                  root {{ frontend_web_root }};
+                  index index.html;
+
+                  location / {
+                      try_files $uri $uri/ /index.html;
+                  }
+
+                  location /api/ {
+                      proxy_pass http://{{ backend_host }}:{{ backend_port }}/api/;
+                      proxy_http_version 1.1;
+                      proxy_set_header Upgrade $http_upgrade;
+                      proxy_set_header Connection "upgrade";
+                      proxy_set_header Host $host;
+                      proxy_set_header X-Real-IP $remote_addr;
+                      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                      proxy_set_header X-Forwarded-Proto $scheme;
+                  }
+              }
+
+        - name: Enable Nginx site
+          file:
+            src: /etc/nginx/sites-available/tubes-cc
+            dest: /etc/nginx/sites-enabled/tubes-cc
+            state: link
+            force: yes
+
+        - name: Disable default Nginx site
+          file:
+            path: /etc/nginx/sites-enabled/default
+            state: absent
+
+        - name: Restart Nginx
+          service:
+            name: nginx
+            state: restarted
+            enabled: yes
+      when: target_node == 'frontend'
