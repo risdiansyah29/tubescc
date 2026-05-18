@@ -1,4 +1,4 @@
-# 💰 FinCloud — Sistem Monitoring Keuangan Berbasis Cloud
+# 💰 FinanceCloud — Sistem Monitoring Keuangan Berbasis Cloud
 
 > Aplikasi web modern untuk memantau keuangan pribadi secara real-time dengan tampilan yang bersih dan intuitif.
 
