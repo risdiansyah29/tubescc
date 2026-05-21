@@ -24,22 +24,22 @@
 
 ## 🛠️ Teknologi yang Digunakan
 
-| Layer | Teknologi |
-|-------|-----------|
-| Frontend | React.js |
-| Backend | Node.js + Express |
-| Database | MySQL |
-| Hosting | Cloud-based |
+| Layer     | Teknologi         |
+|-----------|-------------------|
+| Frontend  | React.js          |
+| Backend   | Node.js + Express |
+| Database  | MySQL             |
+| Hosting   | Cloud-based       |
 
 ---
 
 ## 👥 Anggota Tim
 
-| Nama | Peran |
-|------|-------|
-| Risdiansyah | Backend Developer |
-| Nafriza | Frontend Developer |
-| Falah | Database & Fullstack |
+| Nama        | Peran             |
+|-------------|-------------------|
+| Risdiansyah | Frontend Developer |
+| Nafriza     | Backend Developer |
+| Falah       | Database & Fullstack |
 
 ---
 
@@ -82,6 +82,9 @@ DB_NAME=fincloud
 ### Menjalankan Aplikasi
 
 ```bash
+# Menjalankan VM
+vagrant up
+
 # Jalankan backend (dari folder backend)
 npm run dev
 
@@ -89,7 +92,7 @@ npm run dev
 npm start
 ```
 
-Buka browser dan akses: `http://localhost:3000`
+Buka browser dan akses: `http://localhost:3000 atau 192.168.56.12`
 
 ---
 
@@ -114,4 +117,4 @@ tubescc/
 ## 📄 Lisensi
 
 Project ini dibuat untuk keperluan Tugas Besar mata kuliah.  
-© 2025 — Risdiansyah, Nafriza, Falah
+© 2026 — Risdiansyah, Nafriza, Falah
