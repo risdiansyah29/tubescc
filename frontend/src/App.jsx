@@ -6,6 +6,7 @@ import TransactionList from './components/TransactionList';
 import Savings from './components/Savings';
 import DigitalClock from './components/DigitalClock';
 import { LogOut, Wallet, Moon, Sun } from 'lucide-react';
+import logo from './assets/logo.png';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -55,11 +56,8 @@ function App() {
     <div className={darkMode ? 'dark' : ''}>
       <nav className="navbar">
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ background: 'var(--primary)', padding: '0.5rem', borderRadius: '12px', display: 'flex' }}>
-              <Wallet color="white" size={24} />
-            </div>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.025em' }}>FinanceCloud</h1>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src={logo} alt="FinanceCloud Logo" className="logo-img" />
           </div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

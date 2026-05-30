@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import api from '../api';
+import logo from '../assets/logo.png';
 
 export default function Auth({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -21,7 +22,10 @@ export default function Auth({ onLogin }) {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <div className="card" style={{ width: '400px' }}>
+      <div className="card" style={{ width: '400px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+          <img src={logo} alt="FinanceCloud Logo" className="logo-img" style={{ height: '40px' }} />
+        </div>
         <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>{isLogin ? 'Login' : 'Register'}</h2>
         {error && <p style={{ color: 'red', marginBottom: '1rem' }}>{error}</p>}
         <form onSubmit={handleSubmit}>

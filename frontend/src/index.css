@@ -151,6 +151,16 @@ label {
 .badge-expense { background: #fee2e2; color: #991b1b; }
 .dark .badge-expense { background: rgba(244, 63, 94, 0.2); color: #fb7185; }
 
+/* Logo utility */
+.logo-img {
+  height: 36px;
+  width: auto;
+  transition: filter 0.3s ease;
+}
+.dark .logo-img {
+  filter: invert(1) hue-rotate(180deg);
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
