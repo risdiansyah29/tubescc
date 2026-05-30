@@ -83,7 +83,7 @@ Proyek ini menggunakan arsitektur **3-Tier Multi-Node** dengan detail *Virtual M
 3. **Akses Aplikasi:**
    - Buka browser dan akses Frontend: `http://192.168.56.12`
    - *Atau via Port Forwarding:* `http://localhost:8080`
-   - Cek status API Backend: `http://192.168.56.10:5000` atau `http://localhost:5000`
+   - Cek status API Backend: `http://192.168.56.10:5000` atau `http://localhost:5050`
 
 ### Opsi 2: Local Development (Manual)
 

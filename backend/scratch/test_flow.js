@@ -2,7 +2,7 @@ async function test() {
   try {
     // 1. Register/Login
     console.log('Logging in...');
-    const loginRes = await fetch('http://localhost:5000/api/auth/login', {
+    const loginRes = await fetch('http://localhost:5050/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -16,7 +16,7 @@ async function test() {
 
     // 2. Create Transaction
     console.log('Creating transaction...');
-    const transRes = await fetch('http://localhost:5000/api/transactions', {
+    const transRes = await fetch('http://localhost:5050/api/transactions', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ async function test() {
 
     // 3. Get Transactions
     console.log('Fetching transactions...');
-    const getRes = await fetch('http://localhost:5000/api/transactions', {
+    const getRes = await fetch('http://localhost:5050/api/transactions', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const getData = await getRes.json();

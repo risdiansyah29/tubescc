@@ -133,7 +133,7 @@ http://localhost:8080
 Backend juga bisa dicek dari Windows lewat:
 
 ```text
-http://localhost:5000
+http://localhost:5050
 ```
 
 Daftar akun lewat halaman aplikasi, lalu coba tambah transaksi atau tabungan. Request dari browser akan masuk ke Nginx frontend, lalu diteruskan ke backend lewat endpoint `/api`.

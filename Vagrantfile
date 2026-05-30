@@ -14,7 +14,7 @@ Vagrant.configure("2") do |config|
       machine.vm.network "private_network", ip: ip
 
       if name == "backend"
-        machine.vm.network "forwarded_port", guest: 5000, host: 5000, auto_correct: true
+        machine.vm.network "forwarded_port", guest: 5000, host: 5050, auto_correct: true
       end
 
       if name == "frontend"
