@@ -1,120 +1,139 @@
 # 💰 FinanceCloud — Sistem Monitoring Keuangan Berbasis Cloud
 
-> Aplikasi web modern untuk memantau keuangan pribadi secara real-time dengan tampilan yang bersih dan intuitif.
+> Aplikasi web modern, responsif, dan interaktif untuk memantau keuangan pribadi secara real-time. Dibangun menggunakan arsitektur *Cloud / Multi-Node* untuk skalabilitas dan keandalan tinggi.
 
 ---
 
 ## 📌 Deskripsi
 
-**FinCloud** adalah sistem monitoring keuangan berbasis cloud yang memungkinkan pengguna untuk mencatat, memantau, dan menganalisis kondisi keuangan mereka secara real-time. Dibangun dengan teknologi modern dan antarmuka yang responsif.
+**FinanceCloud** adalah sistem manajemen keuangan pribadi berbasis web yang memungkinkan pengguna untuk mencatat pemasukan, melacak pengeluaran, serta menganalisis kondisi keuangan mereka melalui visualisasi data interaktif. Proyek ini mengimplementasikan konsep *Infrastructure as Code* (IaC) dan *Multi-Node Virtualization* menggunakan Vagrant dan Ansible.
 
 ---
 
 ## ✨ Fitur Utama
 
-- 📥 **Pemasukan** — Catat semua sumber pendapatan
-- 📤 **Pengeluaran** — Lacak setiap pengeluaran secara detail
-- 💰 **Tabungan** — Pantau perkembangan tabungan
-- 🥧 **Diagram Lingkaran** — Visualisasi keuangan dalam bentuk chart interaktif
-- 🕐 **Waktu Real-time** — Menampilkan waktu secara langsung
-- 🌗 **Mode Gelap & Terang** — Pilih tampilan sesuai preferensi
-- 🔐 **Login & Autentikasi** — Keamanan data pengguna
+- 📥 **Manajemen Pemasukan** — Catat semua sumber pendapatan dengan mudah.
+- 📤 **Pelacakan Pengeluaran** — Lacak setiap pengeluaran secara detail berdasarkan kategori.
+- 💰 **Monitor Tabungan** — Pantau perkembangan dan target tabungan Anda.
+- 🥧 **Visualisasi Interaktif** — Analisis data keuangan melalui diagram interaktif (Chart.js).
+- 🌗 **Mode Gelap & Terang** — Antarmuka adaptif yang nyaman digunakan kapan saja.
+- 🔐 **Sistem Keamanan & Autentikasi** — Login aman berbasis JWT (JSON Web Tokens) dan enkripsi password.
+- 🌐 **Arsitektur Multi-Node** — Pemisahan *Frontend*, *Backend*, dan *Database* ke dalam server (Virtual Machine) yang berbeda untuk menjamin kinerja dan keamanan.
 
 ---
 
 ## 🛠️ Teknologi yang Digunakan
 
-| Layer     | Teknologi         |
-|-----------|-------------------|
-| Frontend  | React.js          |
-| Backend   | Node.js + Express |
-| Database  | MySQL             |
-| Hosting   | Cloud-based       |
+Proyek ini dibangun menggunakan *stack* teknologi modern mulai dari sisi aplikasi hingga infrastruktur:
+
+### 🎨 Frontend
+- **Framework:** React.js dengan Vite (`@vitejs/plugin-react`)
+- **Visualisasi:** Chart.js & `react-chartjs-2`
+- **HTTP Client:** Axios
+- **Ikon:** Lucide React
+
+### ⚙️ Backend
+- **Framework:** Node.js & Express.js
+- **ORM:** Sequelize
+- **Database:** MySQL (Production) & SQLite (Development)
+- **Keamanan:** Bcrypt.js & JSON Web Token (JWT)
+
+### ☁️ Infrastruktur & Deployment (DevOps)
+- **Virtualisasi:** VirtualBox
+- **Provisioning:** Vagrant
+- **Configuration Management:** Ansible
+- **Web Server / Reverse Proxy:** Nginx
 
 ---
 
-## 👥 Anggota Tim
+## 👥 Tim Pengembang
 
-| Nama        | Peran             |
-|-------------|-------------------|
-| Risdiansyah | Frontend Developer |
-| Nafriza     | Backend Developer |
-| Falah       | Database & Fullstack |
-
----
-
-## 🚀 Cara Menjalankan Project
-
-### Prerequisites
-Pastikan sudah menginstall:
-- [Node.js](https://nodejs.org/)
-- [MySQL](https://www.mysql.com/)
-- [Git](https://git-scm.com/)
-
-### Instalasi
-
-```bash
-# 1. Clone repository
-git clone git@github.com:risdiansyah29/tubescc.git
-
-# 2. Masuk ke folder project
-cd tubescc
-
-# 3. Install dependencies backend
-cd backend
-npm install
-
-# 4. Install dependencies frontend
-cd ../frontend
-npm install
-```
-
-### Konfigurasi Database
-
-```bash
-# Buat file .env di folder backend
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=password_kamu
-DB_NAME=fincloud
-```
-
-### Menjalankan Aplikasi
-
-```bash
-# Menjalankan VM
-vagrant up
-
-# Jalankan backend (dari folder backend)
-npm run dev
-
-# Jalankan frontend (dari folder frontend)
-npm start
-```
-
-Buka browser dan akses: `http://localhost:3000 atau 192.168.56.12`
+| Nama | Peran |
+|------|-------|
+| **Risdiansyah** | Frontend Developer |
+| **Nafriza** | Backend Developer |
+| **Falah** | Database & Fullstack Engineer |
 
 ---
 
-## 📁 Struktur Folder
+## 🚀 Panduan Instalasi & Deployment
 
-```
+Proyek ini menggunakan arsitektur **3-Tier Multi-Node** dengan detail *Virtual Machine* (VM) sebagai berikut:
+- 🗄️ `database` — `192.168.56.11` (MySQL)
+- ⚙️ `backend` — `192.168.56.10` (Express API + Sequelize, Port 5000)
+- 🖥️ `frontend` — `192.168.56.12` (React Build + Nginx, Port 80)
+
+### Opsi 1: Otomatis via Vagrant & Ansible (Rekomendasi)
+
+**Prasyarat:** VirtualBox, Vagrant, dan Git (Bash/PowerShell).
+
+1. **Clone repositori:**
+   ```bash
+   git clone git@github.com:risdiansyah29/tubescc.git
+   cd tubescc
+   ```
+2. **Jalankan Provisioning VM:**
+   ```bash
+   vagrant up
+   ```
+   *Catatan: Proses ini akan mengunduh OS Ubuntu, menginstal dependensi, menyiapkan database, melakukan build React, dan menyalakan server Nginx/Node secara otomatis.*
+3. **Akses Aplikasi:**
+   - Buka browser dan akses Frontend: `http://192.168.56.12`
+   - *Atau via Port Forwarding:* `http://localhost:8080`
+   - Cek status API Backend: `http://192.168.56.10:5000` atau `http://localhost:5000`
+
+### Opsi 2: Local Development (Manual)
+
+Jika Anda ingin menjalankan proyek di OS host (tanpa VM) untuk proses *development*:
+
+**Prasyarat:** Node.js (v18+), npm/yarn, dan MySQL.
+
+1. **Setup Database:**
+   Buat database MySQL lokal (misal: `finance_db`).
+2. **Setup Backend:**
+   ```bash
+   cd backend
+   npm install
+   # Konfigurasi .env sesuai dengan database lokal Anda
+   npm run dev
+   ```
+3. **Setup Frontend:**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+4. **Akses Development Server:**
+   Buka `http://localhost:5173` (port default Vite).
+
+---
+
+## 📁 Struktur Repositori
+
+```text
 tubescc/
-├── frontend/          # React.js
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   └── App.js
-├── backend/           # Node.js + Express
-│   ├── routes/
-│   ├── controllers/
-│   └── server.js
-└── README.md
+├── frontend/          # Source code React + Vite (Antarmuka Pengguna)
+│   ├── src/           # Komponen, Halaman, API service
+│   ├── public/        # Aset statis
+│   └── package.json   # Dependensi frontend
+├── backend/           # Source code Node.js + Express (Logika Bisnis & API)
+│   ├── config/        # Konfigurasi database (.env reader)
+│   ├── controllers/   # Logika kontrol tiap endpoint
+│   ├── models/        # Skema Sequelize ORM
+│   ├── routes/        # Definisi API routes
+│   └── index.js       # Entry point server backend
+├── infra/             # Skrip Infrastruktur dan Konfigurasi
+│   ├── playbook.yml   # Ansible playbook untuk setup 3 VM
+│   ├── nginx.conf     # Konfigurasi reverse proxy frontend
+│   ├── deploy.sh      # Skrip deployment
+│   └── TUTORIAL-VM.md # Panduan lengkap arsitektur VM
+├── Vagrantfile        # Definisi topologi dan provisioning Virtual Machine
+└── README.md          # Dokumentasi utama proyek
 ```
 
 ---
 
-## 📄 Lisensi
+## 📄 Lisensi & Kredit
 
-Project ini dibuat untuk keperluan Tugas Besar mata kuliah.  
-© 2026 — Risdiansyah, Nafriza, Falah
+Proyek FinanceCloud (Tubes CC) dikembangkan sebagai bagian dari Tugas Besar mata kuliah *Cloud Computing* (Komputasi Awan).  
+© 2026 — Risdiansyah, Nafriza, Falah. Hak cipta dilindungi.

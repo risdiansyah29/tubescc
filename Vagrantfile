@@ -1,6 +1,5 @@
 Vagrant.configure("2") do |config|
   # Windows/VirtualBox: ubuntu/jammy64
-  # Mac Apple Silicon: jalankan dengan VAGRANT_BOX=bento/ubuntu-22.04 vagrant up
   config.vm.box = ENV.fetch("VAGRANT_BOX", "ubuntu/jammy64")
 
   nodes = [
