@@ -38,6 +38,9 @@ Proyek ini dibangun menggunakan *stack* teknologi modern mulai dari sisi aplikas
 - **Database:** MySQL (Production) & SQLite (Development)
 - **Keamanan:** Bcrypt.js & JSON Web Token (JWT)
 
+> [!NOTE]
+> **Pemberitahuan Database:** Proyek ini sepenuhnya menggunakan database relasional **MySQL** (untuk produksi/VM) dan **SQLite** (untuk pengembangan lokal) yang dikelola menggunakan ORM **Sequelize**. Sistem ini **TIDAK menggunakan MongoDB** atau database NoSQL lainnya. Seluruh konfigurasi dan dependensi MongoDB telah dipastikan bersih dari proyek.
+
 ### ☁️ Infrastruktur & Deployment (DevOps)
 - **Virtualisasi:** VirtualBox
 - **Provisioning:** Vagrant
